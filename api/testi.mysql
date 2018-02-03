@@ -1,0 +1,2 @@
+USE observations;
+SELECT * FROM observations WHERE timestamp > UNIX_TIMESTAMP() - 1800;
