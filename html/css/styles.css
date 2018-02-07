@@ -1,0 +1,33 @@
+body {
+    background-color: yellow;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    margin: 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-template-rows: repeat(3, auto);
+    grid-gap: 5px;
+    width: 100vw;
+    height: 100vh;
+  }
+  
+.grid-item {
+    background: #171717;
+    color: #efefef;
+    /* padding: 1em; */
+    /* width: 33vw; */
+    height: 50vh;
+  }
+
+.grid-graph {
+    grid-row: 2/4
+}
+  
+  .grid > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }

@@ -4,9 +4,7 @@ const { buildSchema } = require('graphql');
 const mysql = require('mysql');
 
 const halfHour = 1800
-const tempQuery = `SELECT temperature FROM observations WHERE timestamp > UNIX_TIMESTAMP() - ${halfHour}`
-const relHumQuery = `SELECT relativehumidity FROM observations WHERE timestamp > UNIX_TIMESTAMP() - ${halfHour}`
-const presQuery = `SELECT pressure FROM observations WHERE timestamp > UNIX_TIMESTAMP() - ${halfHour}`
+const tempQuery = `SELECT * FROM observations WHERE timestamp > UNIX_TIMESTAMP() - ${halfHour}`
 
 // Connect to mysql database
 const connection = mysql.createConnection({
@@ -20,19 +18,16 @@ connection.connect();
 
 // Define schema for grapql
 const schema = buildSchema(`
-        type TempData {
-            temperature: Int
-        }
-        type PresData {
-            pressure: Int
-        }
-        type RelHumData {
-            relativehumidity: Int
+        type Data {
+            temperature: Int,
+            pressure: Int,
+            relativehumidity: Int,
+            timestamp: Int
+            date: String,
+            time: String
         }
         type Query {
-            temperatures: [TempData],
-            pressures: [PresData],
-            relativehumidities: [RelHumData],
+            temperatures: [Data],
         }
 `
 );
@@ -51,19 +46,9 @@ async function queryTemperatures(){
     const values = await querySQL(tempQuery);
     return values;
 }
-async function queryPressures(){
-    const values = await querySQL(presQuery);
-    return values;
-}
-async function queryRelativeHumidities(){
-    const values = await querySQL(relHumQuery);
-    return values;
-}
 // Define functions for graphql
 const root = {
-    temperatures: queryTemperatures,
-    pressures: queryPressures,
-    relativehumidities: queryRelativeHumidities,
+    temperatures: queryTemperatures
 }
 
 const app = express()

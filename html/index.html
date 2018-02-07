@@ -1,0 +1,72 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Dashboard</title>
+  <meta name="description" content="Dashboard">
+  <meta name="author" content="Niko Nummi">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.0.2/echarts.min.js"></script>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <div class="grid">
+    <div class="grid-item">Lämpötila</div>
+    <div class="grid-item">Suhteellinen ilmankosteus</div>
+    <div class="grid-item">Ilmanpaine</div>
+    <div class="grid-item grid-graph">
+      <div id="temperature" style="width: 100%; height:100%;"></div>
+    </div>
+    <div class="grid-item grid-graph">
+      <div id="temperature" style="width: 100%; height:100%;"></div>
+    </div>
+    <div class="grid-item grid-graph">
+      <div id="temperature" style="width: 100%; height:100%;"></div>
+    </div>
+  </div>
+  <script type="text/javascript">
+
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+    xhr.open("POST", "http://192.168.0.107:4000/graphql");
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.onload = function () {
+      // based on prepared DOM, initialize echarts instance
+      var myChart = echarts.init(document.getElementById('temperature'));
+
+      // specify chart configuration item and data
+      var option = {
+        title: {
+          text: 'Lämpötilan kehitys'
+        },
+        tooltip: {},
+        xAxis: {
+          data: xhr.response.data.temperatures.map( (item) => {
+            item.time
+          })
+        },
+        yAxis: {},
+        series: [{
+          name: 'Sales',
+          type: 'bar',
+          data: xhr.response.data.temperatures.map ( () => {
+            item.temperature
+          })
+        }]
+      };
+
+      // use configuration item and data specified to show chart
+      myChart.setOption(option);
+      console.log('data returned:', xhr.response);
+    }
+    xhr.send(JSON.stringify({ query: "{ temperatures { temperature time} }" }));
+
+  </script>
+</body>
+
+</html>
