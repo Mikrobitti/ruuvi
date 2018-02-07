@@ -53,6 +53,7 @@ const root = {
 
 const app = express()
 
+app.use(express.static('../html'))
 app.use('/graphql', graphqlHTTP({
       schema: schema,
       graphiql: true,
