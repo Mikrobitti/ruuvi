@@ -38,26 +38,37 @@
     xhr.onload = function () {
       // based on prepared DOM, initialize echarts instance
       var myChart = echarts.init(document.getElementById('temperature'));
-
+      const tempData = xhr.response.data.temperatures.map( (item) => item.temperature); 
       // specify chart configuration item and data
       var option = {
         title: {
-          text: 'Lämpötilan kehitys'
+          text: 'Lämpötilan kehitys',
+          textStyle: {
+            color: '#ffffff',
+          },
         },
         tooltip: {},
         name: 'Aika',
         xAxis: {
           data: xhr.response.data.temperatures.map( (item) => {
             return item.time
-          })
+          }),
+          axisLabel: {
+            color: '#ffffff',
+          },
         },
-        yAxis: {},
+        yAxis: {
+          axisLabel: {
+            color: '#ffffff',
+          },
+          min: Math.min(...tempData) - 1, 
+          max: Math.max(...tempData) + 1, 
+        },
         series: [{
           name: 'Lämpötila',
+          color: '#ffffff',
           type: 'scatter',
-          data: xhr.response.data.temperatures.map ( (item) => {
-            return item.temperature
-          })
+          data: tempData,  
         }]
       };
 
