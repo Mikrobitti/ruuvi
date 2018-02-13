@@ -11,73 +11,89 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.0.2/echarts.min.js"></script>
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <link rel="stylesheet" href="css/styles.css">
+  <meta http-equiv="refresh" content="60">
 </head>
 
 <body>
   <div class="grid">
-    <div class="grid-item">Lämpötila</div>
-    <div class="grid-item">Suhteellinen ilmankosteus</div>
-    <div class="grid-item">Ilmanpaine</div>
-    <div class="grid-item grid-graph">
-      <div id="temperature" style="width: 100%; height:100%;"></div>
+    <div id="temperature" class="grid-item"></div>
+    <div id="relativehumidity" class="grid-item"></div>
+    <div id="pressure" class="grid-item"></div>
+    <div class="large-chart grid-chart">
+      <div id="temperatureChart" style="width: 100%; height:100%;"></div>
     </div>
-    <div class="grid-item grid-graph">
-      <div id="temperature" style="width: 100%; height:100%;"></div>
-    </div>
-    <div class="grid-item grid-graph">
-      <div id="temperature" style="width: 100%; height:100%;"></div>
+    <div class="grid-chart">
+      <div id="pressureChart" style="width: 100%; height:100%;"></div>
     </div>
   </div>
   <script type="text/javascript">
-
-    var xhr = new XMLHttpRequest();
+    let tempData = [];
+    let relHumData = [];
+    let presData = [];
+    let timeData = [];
+      // specify chart configuration item and data
+    let option = {
+         title: {
+             text: 'Lämpötilan kehitys',
+           textStyle: {
+             color: '#ffffff',
+           },
+         },
+         tooltip: {},
+         name: 'Aika',
+         xAxis: {
+             data: timeData, 
+             axisLabel: {
+                 color: '#ffffff',
+             },
+         },
+         yAxis: {
+             axisLabel: {
+                 color: '#ffffff',
+             },
+             min: Math.min(...tempData) - 1, 
+             max: Math.max(...tempData) + 1, 
+         },
+         series: [{
+             name: 'Lämpötila',
+             color: '#ffffff',
+             type: 'scatter',
+             data: tempData,  
+         }]
+       };
+    const xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.open("POST", "/graphql");
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("Accept", "application/json");
     xhr.onload = function () {
-      // based on prepared DOM, initialize echarts instance
-      var myChart = echarts.init(document.getElementById('temperature'));
-      const tempData = xhr.response.data.temperatures.map( (item) => item.temperature); 
-      // specify chart configuration item and data
-      var option = {
-        title: {
-          text: 'Lämpötilan kehitys',
-          textStyle: {
-            color: '#ffffff',
-          },
-        },
-        tooltip: {},
-        name: 'Aika',
-        xAxis: {
-          data: xhr.response.data.temperatures.map( (item) => {
-            return item.time
-          }),
-          axisLabel: {
-            color: '#ffffff',
-          },
-        },
-        yAxis: {
-          axisLabel: {
-            color: '#ffffff',
-          },
-          min: Math.min(...tempData) - 1, 
-          max: Math.max(...tempData) + 1, 
-        },
-        series: [{
-          name: 'Lämpötila',
-          color: '#ffffff',
-          type: 'scatter',
-          data: tempData,  
-        }]
-      };
-
-      // use configuration item and data specified to show chart
-      myChart.setOption(option);
-      console.log('data returned:', xhr.response);
+        tempData = xhr.response.data.temperatures.map( (item) => item.temperature); 
+        timeData = xhr.response.data.temperatures.map( (item) => item.time);
+        relHumData = xhr.response.data.temperatures.map( (item) => item.relativehumidity);
+        presData = xhr.response.data.temperatures.map( (item) => item.pressure);
+        let tempChart = echarts.init(document.getElementById('temperatureChart'));
+        let presChart = echarts.init(document.getElementById('pressureChart'));
+        // Set charts
+        setOptionValues('Lämpötilan kehitys', tempData, timeData); 
+        tempChart.setOption(option);
+        setOptionValues('Ilmanpaineen kehitys', presData, timeData);
+        presChart.setOption(option);
+        // Set Current Values
+        document.getElementById('temperature').innerHTML = `${tempData.pop()}°C`
+        document.getElementById('relativehumidity').innerHTML = `${relHumData.pop()}%`
+        document.getElementById('pressure').innerHTML = `${presData.pop()}hPa`
     }
-    xhr.send(JSON.stringify({ query: "{ temperatures { temperature time} }" }));
+    xhr.send(JSON.stringify({ query: "{ temperatures { temperature relativehumidity pressure time} }" }));
+    
+    const setOptionValues = (title, series, timeData) => {
+        option.title.text = title;
+        option.xAxis.data = timeData;
+        option.series[0].data = series;
+        option.yAxis.min = Math.min(...series) - 1;
+        option.yAxis.max = Math.max(...series) + 1;    
+    }   
 
+    // use configuration item and data specified to show chart
   </script>
 </body>
 
