@@ -4,7 +4,8 @@ const { buildSchema } = require('graphql');
 const mysql = require('mysql');
 
 const halfHour = 1800
-const tempQuery = `SELECT * FROM observations WHERE timestamp > UNIX_TIMESTAMP() - ${halfHour}`
+const halfDay = 43200
+const tempQuery = `SELECT * FROM observations WHERE timestamp > UNIX_TIMESTAMP() - ${halfDay}`
 
 // Connect to mysql database
 const connection = mysql.createConnection({
