@@ -1,6 +1,4 @@
 import MySQLdb
-import datetime
-import time
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
 # Read data from sensor
@@ -8,8 +6,6 @@ sensor = RuuviTag('E0:7F:A8:07:C2:36')
 state = sensor.update()
 state = sensor.state
 
-date = datetime.datetime.utcnow()
-time = time.time()
 pres = state["pressure"]
 temp = state["temperature"]
 relhum = state["humidity"]
