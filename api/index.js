@@ -3,7 +3,6 @@ const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mysql = require('mysql');
 
-const halfHour = 1800
 const halfDay = 43200
 const tempQuery = `SELECT * FROM observations WHERE timestamp > UNIX_TIMESTAMP() - ${halfDay}`
 
