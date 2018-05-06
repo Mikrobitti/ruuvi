@@ -66,10 +66,10 @@
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("Accept", "application/json");
     xhr.onload = function () {
-        tempData = xhr.response.data.temperatures.map( (item) => item.temperature); 
-        timeData = xhr.response.data.temperatures.map( (item) => item.time);
-        relHumData = xhr.response.data.temperatures.map( (item) => item.relativehumidity);
-        presData = xhr.response.data.temperatures.map( (item) => item.pressure);
+        tempData = xhr.response.data.measurements.map( (item) => item.temperature); 
+        timeData = xhr.response.data.measurements.map( (item) => item.time);
+        relHumData = xhr.response.data.measurements.map( (item) => item.relativehumidity);
+        presData = xhr.response.data.measurements.map( (item) => item.pressure);
         let tempChart = echarts.init(document.getElementById('temperatureChart'));
         let presChart = echarts.init(document.getElementById('pressureChart'));
         // Set charts
@@ -82,7 +82,7 @@
         document.getElementById('relativehumidity').innerHTML = `${relHumData.pop()}%`
         document.getElementById('pressure').innerHTML = `${presData.pop()}hPa`
     }
-    xhr.send(JSON.stringify({ query: "{ temperatures { temperature relativehumidity pressure time} }" }));
+    xhr.send(JSON.stringify({ query: "{ measurements { temperature relativehumidity pressure time} }" }));
     
     const setOptionValues = (title, series, timeData) => {
         option.title.text = title;

@@ -4,7 +4,7 @@ const { buildSchema } = require('graphql');
 const mysql = require('mysql');
 
 const halfDay = 43200
-const tempQuery = `SELECT * FROM observations WHERE timestamp > UNIX_TIMESTAMP() - ${halfDay}`
+const measurementsQuery = `SELECT * FROM observations WHERE timestamp > UNIX_TIMESTAMP() - 9000000`
 
 // Connect to mysql database
 const connection = mysql.createConnection({
@@ -27,7 +27,7 @@ const schema = buildSchema(`
             time: String
         }
         type Query {
-            temperatures: [Data],
+            measurements: [Data],
         }
 `
 );
@@ -42,13 +42,13 @@ function querySQL(query) {
         })
     });
 }
-async function queryTemperatures(){
-    const values = await querySQL(tempQuery);
+async function queryMeasurements(){
+    const values = await querySQL(measurementsQuery);
     return values;
 }
 // Define functions for graphql
 const root = {
-    temperatures: queryTemperatures
+    measurements: queryMeasurements
 }
 
 const app = express()
