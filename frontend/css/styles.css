@@ -1,8 +1,9 @@
 body {
-    background-color: yellow;
     overflow-y: hidden;
     overflow-x: hidden;
     margin: 0;
+    background-color: #1D222A;
+    font-family: 'Roboto Mono', monospace;
 }
 
 .grid {
@@ -15,8 +16,7 @@ body {
   }
   
 .grid-item {
-    color: #ffffff;
-    /* padding: 1em; */
+    color: white; 
     width: 33vw;
     height: 50vh;
     font-size: 9vw; 
@@ -32,8 +32,28 @@ body {
 }
   
   .grid > * {
-    background: #171717;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
   }
+
+div#temperature.grid-item  {
+    background-color: #252A33;
+}
+
+div#pressure.grid-item {
+    background-color: #252A33;
+}
+
+.label {
+    font-size: 24px;
+}
+
+.value {
+    font-size: 100px;
+}
+
+#temperatureChart, #pressureChart {
+    margin-top: 15px;
+}
